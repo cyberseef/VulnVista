@@ -1,0 +1,9 @@
+# Ignore all files in this folder
+*
+
+# But keep tracked files
+!.gitignore
+!sample.md
+!sample.pdf
+!samplemd.png
+!sample.png

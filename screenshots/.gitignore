@@ -1,0 +1,6 @@
+# Ignore all files in this folder
+*
+
+# But keep tracked files
+!.gitignore
+!example.com.png
