@@ -3,4 +3,4 @@
 
 # But keep tracked files
 !.gitignore
-!example.com.png
+!sample.png

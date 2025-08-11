@@ -83,6 +83,7 @@ Outputs are created under `output/` with filenames:
 
 **[PDF Report Sample](/output/sample.pdf)**
 [![PDF OWASP JUICE SHOP](/output/samplepdf.png)](/output/sample.pdf)
+
 **[Screenshot Sample](/screenshots/sample.png)**
 [![Screenshot OWASP JUICE SHOP](/screenshots/sample.png)](/screenshots/sample.png)
 
