@@ -7,13 +7,25 @@ import subprocess
 from datetime import datetime
 
 OUTPUT_DIR = "output"
+SCREENSHOT_DIR = "screenshots"
 
 def safe_name_for_domain(url):
     d = urllib.parse.urlparse(url).netloc
     return d.replace(":", "_").replace("/", "_")
 
-def generate(target, pages, vulns, pdf=False, timestamp=None, take_screenshots=False):
+def _ensure_dirs():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
+    os.makedirs(SCREENSHOT_DIR, exist_ok=True)
+
+def _wkhtmltoimage_available():
+    try:
+        subprocess.run(["wkhtmltoimage", "--version"], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return True
+    except Exception:
+        return False
+
+def generate(target, pages, vulns, pdf=False, timestamp=None, take_screenshots=False):
+    _ensure_dirs()
     domain = safe_name_for_domain(target)
     ts = timestamp or datetime.utcnow().strftime("%Y%m%d_%H%M%S")
     md_filename = f"report_{domain}_{ts}.md"
@@ -53,17 +65,25 @@ def generate(target, pages, vulns, pdf=False, timestamp=None, take_screenshots=F
 
     # optional screenshots via wkhtmltoimage if requested
     screenshots = []
-    if take_screenshots:
+    if take_screenshots and _wkhtmltoimage_available():
         for i, p in enumerate(pages[:20]):  # limit to first 20 pages
             safe = p.replace("http://", "").replace("https://", "").replace("/", "_")
-            outname = os.path.join(OUTPUT_DIR, f"screenshot_{safe}.png")
+            outname = os.path.join(SCREENSHOT_DIR, f"screenshot_{safe}.png")
             try:
-                # wkhtmltoimage must be on PATH
-                subprocess.run(["wkhtmltoimage", "--width", "1200", "--height", "800", p, outname], check=True, timeout=30)
+                # Use JS delay to allow dynamic pages to render; add quality and disable smart width
+                subprocess.run([
+                    "wkhtmltoimage",
+                    "--width", "1280",
+                    "--height", "900",
+                    "--quality", "90",
+                    "--disable-smart-width",
+                    "--javascript-delay", "2000",
+                    p,
+                    outname
+                ], check=True, timeout=45)
                 screenshots.append(outname)
-            except Exception as e:
+            except Exception:
                 # don't fail the whole run on screenshot errors
-                # print(f"[!] Screenshot failed for {p}: {e}")
                 pass
 
     result = {

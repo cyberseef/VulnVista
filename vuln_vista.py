@@ -12,6 +12,7 @@ import time
 import os
 
 from modules import headers, cookies, forms, js_parser, report
+import re
 
 # simple configuration
 COMMON_DIRS = ["uploads/", "backup/", "admin/", "config/", ".git/", "robots.txt", "sitemap.xml"]
@@ -85,9 +86,38 @@ def crawl_and_scan(start_url, max_pages=100, take_screenshots=False):
 
         # basic checks per page
         headers.check_headers(resp.headers, url, vulns)
-        cookies.check_cookies(resp.cookies, url, vulns)
+        # pass full response to cookies to allow HttpOnly via Set-Cookie
+        cookies.check_cookies(resp, url, vulns)
         forms.check_forms(url, resp.text, vulns)
         js_parser.check_js_tokens(url, resp.text, vulns)
+
+        # Passive SQL error signature detection
+        error_patterns = [
+            r"SQL syntax;",
+            r"warning: mysql",
+            r"unclosed quotation mark after the character string",
+            r"quoted string not properly terminated",
+            r"psql: FATAL:",
+            r"PostgreSQL.*ERROR",
+            r"SQLite/JDBCDriver",
+            r"ODBC SQL Server Driver",
+            r"Oracle error",
+            r"ORA-\d{5}",
+            r"PG::\w+Error",
+        ]
+        body_lower = resp.text.lower() if isinstance(resp.text, str) else ""
+        for pat in error_patterns:
+            try:
+                if re.search(pat, body_lower, re.IGNORECASE):
+                    vulns.append({
+                        'type': 'Possible SQL Injection Indicator',
+                        'name': f"Error signature: {pat}",
+                        'url': url,
+                        'risk': 'Medium'
+                    })
+                    break
+            except re.error:
+                continue
 
         # server tech detection
         server = resp.headers.get("Server") or resp.headers.get("X-Powered-By")
@@ -103,6 +133,17 @@ def crawl_and_scan(start_url, max_pages=100, take_screenshots=False):
             full = normalize(full)
             if same_domain(start_url, full) and full not in visited:
                 q.append(full)
+
+        # enumerate GET parameters on the discovered page URL itself
+        parsed_url = urllib.parse.urlparse(url)
+        params = urllib.parse.parse_qs(parsed_url.query)
+        for param_name in params.keys():
+            vulns.append({
+                'type': 'URL Query Parameter Detected',
+                'name': param_name,
+                'url': url,
+                'risk': 'Info'
+            })
 
         # optional: check common directories once from base
         if len(found_pages) == 1:

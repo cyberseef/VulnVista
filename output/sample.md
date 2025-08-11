@@ -1,65 +1,60 @@
 # Vulnerability Report
 
-**Target:** https://demo.owasp-juice.shop/#/
+**Target:** http://localhost/DVWA/
 
-**Generated:** 20250811_074721
+**Generated:** 20250811_101724
 
 ## Pages Discovered
-- https://demo.owasp-juice.shop
+- http://localhost/DVWA
 
 ## Vulnerabilities Found
 ### Missing Security Header
 - **Name:** Content-Security-Policy
-- **Page:** https://demo.owasp-juice.shop
+- **Page:** http://localhost/DVWA
 - **Risk Level:** Medium
 
 ### Missing Security Header
 - **Name:** Strict-Transport-Security
-- **Page:** https://demo.owasp-juice.shop
+- **Page:** http://localhost/DVWA
 - **Risk Level:** Medium
 
-### Sensitive Token in JS
-- **Name:** Hardcoded token in main.js
-- **Page:** https://demo.owasp-juice.shop/main.js
+### Missing Security Header
+- **Name:** X-Frame-Options
+- **Page:** http://localhost/DVWA
 - **Risk Level:** Medium
+
+### Input Parameter Detected
+- **Name:** username (POST)
+- **Page:** http://localhost/DVWA
+- **Risk Level:** Info
+
+### Possible XSS or SQLi Input
+- **Name:** username (POST)
+- **Page:** http://localhost/DVWA
+- **Risk Level:** Medium
+
+### Input Parameter Detected
+- **Name:** password (POST)
+- **Page:** http://localhost/DVWA
+- **Risk Level:** Info
+
+### Input Parameter Detected
+- **Name:** Login (POST)
+- **Page:** http://localhost/DVWA
+- **Risk Level:** Info
+
+### Hidden Field Discovered
+- **Name:** user_token
+- **Page:** http://localhost/DVWA
+- **Risk Level:** Info
+
+### Input Parameter Detected
+- **Name:** user_token (POST)
+- **Page:** http://localhost/DVWA
+- **Risk Level:** Info
 
 ### Server Stack Disclosure
-- **Name:** Heroku
-- **Page:** https://demo.owasp-juice.shop
+- **Name:** Apache/2.4.64 (Debian)
+- **Page:** http://localhost/DVWA
 - **Risk Level:** Low
-
-### Open Directory / Public File
-- **Name:** uploads/
-- **Page:** https://demo.owasp-juice.shop/uploads/
-- **Risk Level:** Medium
-
-### Open Directory / Public File
-- **Name:** backup/
-- **Page:** https://demo.owasp-juice.shop/backup/
-- **Risk Level:** Medium
-
-### Open Directory / Public File
-- **Name:** admin/
-- **Page:** https://demo.owasp-juice.shop/admin/
-- **Risk Level:** Medium
-
-### Open Directory / Public File
-- **Name:** config/
-- **Page:** https://demo.owasp-juice.shop/config/
-- **Risk Level:** Medium
-
-### Open Directory / Public File
-- **Name:** .git/
-- **Page:** https://demo.owasp-juice.shop/.git/
-- **Risk Level:** Medium
-
-### Open Directory / Public File
-- **Name:** robots.txt
-- **Page:** https://demo.owasp-juice.shop/robots.txt
-- **Risk Level:** Medium
-
-### Open Directory / Public File
-- **Name:** sitemap.xml
-- **Page:** https://demo.owasp-juice.shop/sitemap.xml
-- **Risk Level:** Medium
 
