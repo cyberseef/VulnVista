@@ -6,6 +6,11 @@ import argparse
 import time
 import sys
 
+# Force UTF-8 for Windows console to fix rich UnicodeEncodeError
+if sys.platform == "win32" and hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+    sys.stderr.reconfigure(encoding='utf-8')
+
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
