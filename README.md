@@ -23,15 +23,18 @@ git clone https://github.com/cyberseef/VulnVista.git
 cd VulnVista
 ```
 
-2. Install the package and dependencies:
+2. Install the dependencies:
 
 **Windows:**
 ```powershell
+py -m pip install -r requirements.txt
+# OR install as a package:
 py -m pip install -e .
 ```
 
 **Linux/macOS:**
 ```bash
+python3 -m pip install -r requirements.txt
 python3 -m pip install -e .
 ```
 
@@ -46,12 +49,14 @@ sudo apt install ./wkhtmltox_0.12.6.1-2.bullseye_amd64.deb
 
 ## Usage
 
-After installation, the tool can be run globally via the `vulnvista` command (or via `py vuln_vista.py` on Windows if PATH is not updated).
+If you installed it as a package and your Python Scripts folder is in your PATH, you can run the tool globally via the `vulnvista` command. 
+
+If `vulnvista` or `pip` is not recognized, run the script directly using the Python launcher `py` (Windows) or `python3` (Linux/Mac):
 
 Basic:
 
-```bash
-vulnvista -u https://127.0.0.1/DVWA/
+```powershell
+py vuln_vista.py -u https://127.0.0.1/DVWA/
 ```
 
 Adjust Threads and Max Pages:
