@@ -1,29 +1,38 @@
 # VulnVista
 
-Lightweight non-intrusive web vulnerability scanner (Module 7 project).
+Professional Open-Source Web Vulnerability Scanner
 
-## Features (requirements)
+## Features
 - Accept target URL
+- Multithreaded concurrent scanning for fast results
+- Modular Plugin Architecture: Easily extensible with custom vulnerability checks
 - Crawl same-domain pages (discover pages/forms)
-- Detect open directories & common public files (robots.txt, sitemap.xml, etc.)
-- Parse HTML/JS for tokens
+- Detect open directories & common sensitive files (`.env`, `docker-compose.yml`, etc.)
+- Parse HTML/JS for sensitive tokens (API keys, etc.)
 - Check for missing security headers and insecure cookies (Secure + HttpOnly)
 - Enumerate GET/POST parameters, explicitly list hidden fields
-- Detect URL query parameters present on pages
 - Basic SQL error signature detection in responses (passive)
-- Generate `.md` report (optional PDF via wkhtmltopdf); screenshots saved to `screenshots/`
+- Generate `.md` and `.json` reports (optional PDF via wkhtmltopdf)
+- Screenshots saved to `screenshots/` (optional)
+- Beautiful Terminal UI using `Rich`
 
 ## Install
 1. Clone:
 ```bash
 git clone https://github.com/cyberseef/VulnVista.git
 cd VulnVista
-````
+```
 
-2. Python deps:
+2. Install the package and dependencies:
 
+**Windows:**
+```powershell
+py -m pip install -e .
+```
+
+**Linux/macOS:**
 ```bash
-python3 -m pip install -r requirements.txt
+python3 -m pip install -e .
 ```
 
 3. (Optional) For PDF reports and screenshots:
@@ -35,40 +44,32 @@ python3 -m pip install -r requirements.txt
 sudo apt install ./wkhtmltox_0.12.6.1-2.bullseye_amd64.deb
 ```
 
-* Verify:
-
-```bash
-wkhtmltopdf --version
-wkhtmltoimage --version
-```
-
 ## Usage
+
+After installation, the tool can be run globally via the `vulnvista` command (or via `py vuln_vista.py` on Windows if PATH is not updated).
 
 Basic:
 
 ```bash
-python3 vuln_vista.py -u https://127.0.0.1/DVWA/
-```
-```bash
-python3 vuln_vista.py -u https://demo.owasp-juice.shop/#/
+vulnvista -u https://127.0.0.1/DVWA/
 ```
 
-Max pages limit:
+Adjust Threads and Max Pages:
 
 ```bash
-python3 vuln_vista.py -u http://127.0.0.1/DVWA/ --max-pages 200
+vulnvista -u https://demo.owasp-juice.shop/#/ --max-pages 500 --threads 10
 ```
+
+Add Delay for Rate Limiting:
+
 ```bash
-python3 vuln_vista.py -u https://demo.owasp-juice.shop/#/ --max-pages 200
+vulnvista -u https://demo.owasp-juice.shop/#/ --delay 1.5
 ```
 
 Generate PDF and screenshots (if wkhtmltopdf/wkhtmltoimage installed):
 
 ```bash
-python3 vuln_vista.py -u http://127.0.0.1/DVWA/ --pdf-report --take-screenshots
-```
-```bash
-python3 vuln_vista.py -u https://demo.owasp-juice.shop/#/ --pdf-report --take-screenshots
+vulnvista -u http://127.0.0.1/DVWA/ --pdf-report --take-screenshots
 ```
 
 ## Output
@@ -76,21 +77,15 @@ python3 vuln_vista.py -u https://demo.owasp-juice.shop/#/ --pdf-report --take-sc
 Reports are created under `output/`:
 
 * `report_<domain>_<timestamp>.md`
+* `report_<domain>_<timestamp>.json`
 * optional: `report_<domain>_<timestamp>.pdf`
 
 Screenshots (when enabled) are saved under `screenshots/`:
 
 * `screenshot_<page>.png` (uses a small JavaScript render delay to avoid blank images)
 
-## Sample
-**[MD Report Sample](/output/sample.md)**
-[![PDF OWASP JUICE SHOP](/output/samplemd.png)](/output/sample.md)
-
-**[PDF Report Sample](/output/sample.pdf)**
-[![PDF OWASP JUICE SHOP](/output/samplepdf.png)](/output/sample.pdf)
-
-**[Screenshot Sample](/screenshots/sample.png)**
-[![Screenshot OWASP JUICE SHOP](/screenshots/sample.png)](/screenshots/sample.png)
+## Architecture & Adding Plugins
+VulnVista uses a modular plugin architecture. To add a new vulnerability check, simply create a new Python file in the `modules/` directory that inherits from `core.plugin.BasePlugin`. The scanner will automatically load it.
 
 ## Notes & limitations
 
@@ -98,10 +93,8 @@ Screenshots (when enabled) are saved under `screenshots/`:
 * No login automation included (keeps tool simple & stable).
 * JS parsing is shallow (checks inline and linked JS for token-like patterns).
 * Screenshots require `wkhtmltoimage`; the tool waits briefly for JS rendering.
-* For large sites, raise `--max-pages` carefully.
 * Use only on targets you have permission to test.
 
 ## Ethics
 
 Only scan environments you own or have explicit permission to test. Follow responsible disclosure.
-
