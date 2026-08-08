@@ -16,26 +16,43 @@ Professional Open-Source Web Vulnerability Scanner
 - Screenshots saved to `screenshots/` (optional)
 - Beautiful Terminal UI using `Rich`
 
-## Install
-1. Clone:
+## Installation
+
+1. Clone the repository:
 ```bash
 git clone https://github.com/cyberseef/VulnVista.git
 cd VulnVista
 ```
 
-2. Install the dependencies:
+2. Install dependencies:
 
-**Windows:**
-```powershell
-py -m pip install -r requirements.txt
-# OR install as a package:
-py -m pip install -e .
+There are two ways to use VulnVista: installing it globally as a command-line tool, or running the Python script directly.
+
+**Option A: Install Globally (Recommended)**
+This allows you to use the `vulnvista` command from anywhere in your terminal.
+
+*Linux/macOS:*
+```bash
+python3 -m pip install -e .
 ```
 
-**Linux/macOS:**
+*Windows:*
+```powershell
+py -m pip install -e .
+```
+*(Note for Windows users: Ensure your Python `Scripts` directory is in your environment `PATH` variable, otherwise the `vulnvista` command will not be recognized).*
+
+**Option B: Install Dependencies Only**
+If you prefer not to install the package, just install the requirements to run the script directly.
+
+*Linux/macOS:*
 ```bash
 python3 -m pip install -r requirements.txt
-python3 -m pip install -e .
+```
+
+*Windows:*
+```powershell
+py -m pip install -r requirements.txt
 ```
 
 3. (Optional) For PDF reports and screenshots:
@@ -49,30 +66,42 @@ sudo apt install ./wkhtmltox_0.12.6.1-2.bullseye_amd64.deb
 
 ## Usage
 
-If you installed it as a package and your Python Scripts folder is in your PATH, you can run the tool globally via the `vulnvista` command. 
+Depending on your installation method, you will use a different prefix to run the tool.
 
-If `vulnvista` or `pip` is not recognized, run the script directly using the Python launcher `py` (Windows) or `python3` (Linux/Mac):
+**If installed globally (Option A):**
+Use the `vulnvista` command on any platform.
+```bash
+vulnvista -u https://127.0.0.1/DVWA/
+```
 
-Basic:
+**If running directly from the script (Option B):**
+*Linux/macOS:*
+```bash
+python3 vuln_vista.py -u https://127.0.0.1/DVWA/
+```
 
+*Windows:*
 ```powershell
 py vuln_vista.py -u https://127.0.0.1/DVWA/
 ```
 
-Adjust Threads and Max Pages:
+---
 
+### Common Examples
+
+*The examples below use the global `vulnvista` command. If running as a script, replace `vulnvista` with your platform's python command (e.g., `python3 vuln_vista.py`).*
+
+**Adjust Threads and Max Pages:**
 ```bash
 vulnvista -u https://demo.owasp-juice.shop/#/ --max-pages 500 --threads 10
 ```
 
-Add Delay for Rate Limiting:
-
+**Add Delay for Rate Limiting:**
 ```bash
 vulnvista -u https://demo.owasp-juice.shop/#/ --delay 1.5
 ```
 
-Generate PDF and screenshots (if wkhtmltopdf/wkhtmltoimage installed):
-
+**Generate PDF and Screenshots** *(requires wkhtmltopdf/wkhtmltoimage)*:
 ```bash
 vulnvista -u http://127.0.0.1/DVWA/ --pdf-report --take-screenshots
 ```
