@@ -15,7 +15,6 @@ from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TimeElapsedColumn
-from rich import print as rprint
 
 from core.scanner import Scanner
 from modules import report
@@ -95,10 +94,14 @@ def main():
         for v in scanner.vulns:
             risk = v.get('risk', 'Info')
             color = "white"
-            if risk == "High": color = "red"
-            elif risk == "Medium": color = "yellow"
-            elif risk == "Low": color = "cyan"
-            elif risk == "Info": color = "blue"
+            if risk == "High":
+                color = "red"
+            elif risk == "Medium":
+                color = "yellow"
+            elif risk == "Low":
+                color = "cyan"
+            elif risk == "Info":
+                color = "blue"
             
             table.add_row(f"[{color}]{risk}[/{color}]", v.get('type'), v.get('name'), v.get('url'))
             

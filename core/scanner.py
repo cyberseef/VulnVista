@@ -22,6 +22,7 @@ class Scanner:
         self.visited = set()
         self.found_pages = []
         self.vulns = []
+        self._seen_findings = set()
         self.session = requests.Session()
         self.session.headers.update({"User-Agent": USER_AGENT})
         self.plugins = self._load_plugins()
@@ -67,11 +68,20 @@ class Scanner:
         links = []
         if soup:
             for a in soup.find_all("a", href=True):
-                raw = a['href']
+                raw = a['href'].strip()
+                if not raw or raw.startswith(('javascript:', 'mailto:', 'tel:', '#', 'data:')):
+                    continue
                 full = self._normalize(urllib.parse.urljoin(url, raw))
                 if self._same_domain(full) and full not in self.visited:
                     links.append(full)
         return links
+
+    def _is_duplicate(self, finding: dict) -> bool:
+        key = (finding.get('type'), finding.get('name'), finding.get('url'))
+        if key in self._seen_findings:
+            return True
+        self._seen_findings.add(key)
+        return False
 
     def _scan_page(self, url: str, resp: requests.Response, soup: BeautifulSoup):
         page_vulns = []
@@ -79,10 +89,13 @@ class Scanner:
             try:
                 findings = plugin.scan(url, resp, soup)
                 if findings:
-                    page_vulns.extend(findings)
+                    for f in findings:
+                        if not self._is_duplicate(f):
+                            page_vulns.append(f)
             except Exception:
                 pass
         return page_vulns
+
 
     def run(self, progress_callback=None):
         queue = [self.start_url]

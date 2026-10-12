@@ -3,18 +3,17 @@
 Professional Open-Source Web Vulnerability Scanner
 
 ## Features
-- Accept target URL
-- Multithreaded concurrent scanning for fast results
-- Modular Plugin Architecture: Easily extensible with custom vulnerability checks
-- Crawl same-domain pages (discover pages/forms)
-- Detect open directories & common sensitive files (`.env`, `docker-compose.yml`, etc.)
-- Parse HTML/JS for sensitive tokens (API keys, etc.)
-- Check for missing security headers and insecure cookies (Secure + HttpOnly)
-- Enumerate GET/POST parameters, explicitly list hidden fields
-- Basic SQL error signature detection in responses (passive)
-- Generate `.md` and `.json` reports (optional PDF via wkhtmltopdf)
-- Screenshots saved to `screenshots/` (optional)
-- Beautiful Terminal UI using `Rich`
+- **Concurrent Multithreaded Crawling**: High-performance crawling with rate-limiting and domain-scope confinement.
+- **Canary-Based Sensitive File Detection**: Baseline canary profiling eliminates soft-404/SPA false alarms; verifies real content signatures (`.env`, `.git/config`, `docker-compose.yml`, `phpinfo.php`).
+- **Shannon Entropy & Secret Hunting**: Detects high-entropy secrets and explicit key signatures (AWS, Google, GitHub, Slack, Stripe, JWTs) while filtering out vendor CDNs and minified code variables.
+- **Form Security Audits**: Detects insecure password transmission over HTTP, state-changing POST forms lacking Anti-CSRF tokens, and external action endpoints.
+- **RFC 6797-Compliant Header Analysis**: Accurate HSTS auditing (restricted to HTTPS and public hosts) with server version disclosure pattern matching.
+- **Cookie Security Classification**: Categorizes session/auth cookies vs. tracking cookies, with environment-aware flags and deduplication.
+- **Context-Aware SQL Error Scanner**: Passive error matching with documentation/code block exclusion and HTTP 500 status correlation.
+- **Global Deduplication Engine**: Automatically deduplicates findings across pages for clean, concise reporting.
+- **Flexible Reporting**: Exports results to Markdown (`.md`), JSON (`.json`), and optional PDF reports.
+- **Optional Visual Snapshots**: Automates page screenshots saved to `screenshots/`.
+- **Modern Terminal UI**: Interactive progress and stylized output tables powered by `Rich`.
 
 ## Installation
 
@@ -123,11 +122,13 @@ VulnVista uses a modular plugin architecture. To add a new vulnerability check, 
 
 ## Notes & limitations
 
-* **Non-intrusive only** - no active exploit attempts.
-* No login automation included (keeps tool simple & stable).
-* JS parsing is shallow (checks inline and linked JS for token-like patterns).
-* Screenshots require `wkhtmltoimage`; the tool waits briefly for JS rendering.
-* Use only on targets you have permission to test.
+* **Non-intrusive only** - strictly passive and non-destructive auditing; no active exploit attempts.
+* **Smart Noise Reduction** - uses canary checks, content verification, and Shannon entropy to prevent false positives.
+* **Scope-Aware** - external CDN scripts and out-of-domain resources are filtered from scans.
+* No authenticated session crawling included (keeps scanning safe, deterministic, and lightweight).
+* Screenshots require `wkhtmltoimage` installed locally; the tool waits briefly for JS rendering.
+* Use only on targets you own or have explicit permission to audit.
+
 
 ## Ethics
 

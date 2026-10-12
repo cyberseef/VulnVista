@@ -33,5 +33,10 @@ sdist/
 var/
 wheels/
 *.egg-info/
-.installed.cfg
 *.egg
+.installed.cfg
+
+# Local Change Documentation
+CHANGELOG_LOCAL.md
+*.local.md
+
